@@ -1,0 +1,115 @@
+
+require:
+   path
+   fs
+   urlencode
+   quaint-highlight
+   .hleg -> install as install-hleg
+   .hlliso -> install as install-hlliso
+
+
+assets-path = path.join{__dirname, "../assets"}
+
+
+defaults = {
+   default-language = .earlgrey
+   default-extension = ".html"
+   default-image-extension = ".png"
+   highlight-theme = "xcode"
+}
+
+
+install{@, options >> [defaults & options]} =
+
+   quaint-highlight{
+      theme = options.highlight-theme
+      default = options.default-language
+      install-plugins{hljs} =
+         install-hleg{hljs}
+         install-hlliso{hljs}
+   }{@}
+
+   old-toc = @macros.toc
+
+   @register-macros with {
+      toc{engine, body} =
+         @register-resources with {
+            "js/toc-scroll.js" => {
+               path = path.join{__dirname, "../js/toc-scroll.js"}
+               contents = true
+               type = .js
+               method = .head
+            }
+         }
+         old-toc{engine, body}
+
+      ornate{engine, pattern >> pattern.raw{}, body} =
+         div.ornate %
+            pattern each
+               "+" -> engine.gen{body}
+               letter ->
+                  div % class = 'deco{letter}'
+
+   }
+
+   @register-rules with {
+
+      ;; Dropcap
+      "$$$ \\lead"{engine, {=> lead}} =
+         text = lead.raw{}
+         {span.lead % text[0], text.slice{1}}
+
+      ;; Intra-url
+      "\\label @@@ \\url"{engine, {=> label, => url}} =
+         site-root = engine.documents.meta.get-raw{.site-root}
+         a %
+            href = path.join with
+               site-root
+               match url.raw{}:
+                  R"\."? x -> x
+                  x -> x + options.default-extension
+            engine.gen{label}
+
+      ;; Image
+      "\\maybe\\label @@@ image : \\url"{engine, {=> label, => url}} =
+         site-root = engine.documents.meta.get-raw{.site-root}
+         assets-root = path.join{site-root, "assets"}
+         img %
+            src = path.join with
+               assets-root
+               match url.raw{}:
+                  R"\."? x -> x
+                  x -> x + options.default-image-extension
+            alt = engine.gen{label}
+
+      ;; Dialogues
+      "\\maybe\\character >> \\text"{engine, {=> text}} =
+         {'“', engine.gen{text}, '”'}
+      "<< \\text"{engine, {=> text}} =
+         {'”', engine.gen{text}, '“'}
+
+   }
+
+   @register-resources with {
+      "breuleux/assets" => {
+         path = assets-path
+         contents = true
+         type = null
+      }
+   }
+
+   @register-postprocessor{R"“”", ""}
+   @register-postprocessor{R"( +)”", "”$1"}
+   @register-postprocessor{R"“( +)", "$1“"}
+   @register-postprocessor{R" *-- *", "—"}
+
+
+
+main{*match} =
+   {@, options = {=}} when @is-quaint-engine ->
+      install{@, options}
+   {options = {=}} ->
+      {@} -> main{@, options}
+
+provide = main
+
