@@ -5,22 +5,22 @@
   "format": "cjs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/breuleux/@breuleux/quaint-my-utils"
+    "url": "https://github.com/breuleux/quaint-my-utils"
   },
   "keywords": [],
   "author": "Olivier Breuleux",
   "license": "MIT",
   "main": "./lib/index.js",
   "dependencies": {
-    "earlgrey-runtime": ">=0.0.11",
-    "quaint": ">=0.0.14",
+    "earlgrey-runtime": ">=0.0.12",
+    "quaint": ">=0.0.15",
     "urlencode": "^1.1.0"
   },
   "devDependencies": {
     "earlgrey": ">=0.0.13",
     "mocha": "^2.2.1",
     "earl-mocha": ">=0.0.3",
-    "quaint-highlight": ">=0.0.6"
+    "quaint-highlight": ">=0.0.7"
   },
   "scripts": {
     "refresh": "earl compile -5vso lib/ src/",
