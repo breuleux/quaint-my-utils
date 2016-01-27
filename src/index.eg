@@ -101,7 +101,7 @@ install{@, options >> [defaults & options]} =
    @register-postprocessor{R"“”", ""}
    @register-postprocessor{R"( +)”", "”$1"}
    @register-postprocessor{R"“( +)", "$1“"}
-   @register-postprocessor{R" *-- *", "—"}
+   @register-postprocessor{R" +-- +", "—"}
 
 
 
