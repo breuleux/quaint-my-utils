@@ -139,6 +139,99 @@
         return debounce(func, wait, { 'leading': leading, 'maxWait': +wait, 'trailing': trailing });
     }
 
+
+    // ACTUAL TOC CODE
+
+    var current = null;
+    var select2 = null;
+
+    // Prepare the TOC, add expand/collapse button
+    function prepare() {
+        var subul = [].slice.call(document.querySelectorAll("ul.toc ul"));
+        subul.forEach(function (ul) {
+            var parent = ul.parentElement;
+            var elem = document.createElement("span");
+            elem.className = "toc-expand"
+            elem.onclick = function (e) {
+                var link = ul.parentElement.childNodes[0];
+                parent.classList.toggle("expanded");
+
+                // // select(link);
+                // console.log(parent);
+                // if (parent.className === "active") {
+                //     update(current, null);
+                // }
+                // else {
+                //     update(current, link);
+                // }
+            }
+            parent.insertBefore(elem, ul);
+        });
+    }
+
+    // Select a link
+    function select(link) {
+        if (!link) { return; }
+        link.classList.add("selected");
+        link.parentElement.classList.add("active");
+        var ul = link.parentElement.parentElement;
+        while (ul.tagName === "UL" && ul.className !== "toc") {
+            ul.parentElement.classList.add("active");
+            ul = ul.parentElement.parentElement;
+        }
+    }
+
+    // Unselect a link
+    function unselect(link) {
+        if (!link) { return; }
+        link.classList.remove("selected");
+        link.parentElement.classList.remove("active");
+        var ul = link.parentElement.parentElement;
+        while (ul.tagName === "UL" && ul.className !== "toc") {
+            ul.parentElement.classList.remove("active");
+            ul = ul.parentElement.parentElement;
+        }
+    }
+
+
+
+
+
+    // // Select a link
+    // function select(link, cls, ocls, goUp) {
+    //     // cls = cls === undefined ? "selected active" : cls;
+    //     // ocls = ocls === undefined ? "active" : ocls;
+    //     if (!link) { return; }
+    //     link.className = cls;
+    //     link.parentElement.className = ocls;
+    //     var ul = link.parentElement.parentElement;
+    //     if (goUp) {
+    //         while (ul.tagName === "UL" && ul.className !== "toc") {
+    //             ul.className = ocls;
+    //             ul.parentElement.className = ocls;
+    //             ul = ul.parentElement.parentElement;
+    //         }
+    //         return null;
+    //     }
+    //     else {
+    //         return console.log(ul.parentElement.childNodes[0]);
+    //     }
+    // }
+
+    // function update(_current, _select2) {
+    //     select(current, "", "", true);
+    //     current = _current;
+    //     if (_select2) {
+    //         select(select2, "", "", true);
+    //         select2 = _select2;
+    //         select(select2, "active", "active", true);
+    //     }
+    //     else {
+    //         select2 = select(select2, "", "", false);
+    //     }
+    //     select(current, "selected active", "active _outer", true);
+    // }
+
     // Highlight the current table of contents element
     function hl() {
         var anchor = document.body;
@@ -151,15 +244,20 @@
             if (s && !link) {
             }
             else if (!s || s.offsetTop > anchor.scrollTop + 75) {
-                var links = [].slice.call(document.querySelectorAll("ul.toc a"));
-                links.forEach(function (link) {
-                    link.className = "";
-                });
+                // var links = [].slice.call(document.querySelectorAll("ul.toc a, ul.toc ul, ul.toc li"));
+                // links.forEach(function (link) {
+                //     link.className = "";
+                // });
+                unselect(current);
                 if (last) {
-                    last.className = "selected";
+                    // update(last, select2);
+                    select(last);
+                    current = last;
                 }
                 else if (link) {
-                    link.className = "selected";
+                    // update(link, select2);
+                    select(link);
+                    current = link;
                 }
                 break;
             }
@@ -170,6 +268,7 @@
     }
 
     window.onload = function () {
+        prepare();
         hl();
         window.onscroll = throttle(hl, 50);
     }
