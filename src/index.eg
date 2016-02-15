@@ -82,11 +82,15 @@ install{@, options >> [defaults & options]} =
                   x -> x + options.default-image-extension
             alt = engine.gen{label}
 
+      ;; ;; Dialogues
+      ;; "\\maybe\\character >> \\text"{engine, {=> text}} =
+      ;;    {'“', engine.gen{text}, '”'}
+      ;; "<< \\text"{engine, {=> text}} =
+      ;;    {'”', engine.gen{text}, '“'}
+
       ;; Dialogues
-      "\\maybe\\character >> \\text"{engine, {=> text}} =
-         {'“', engine.gen{text}, '”'}
-      "<< \\text"{engine, {=> text}} =
-         {'”', engine.gen{text}, '“'}
+      "\\maybe\\character ** \\text"{engine, {=> text}} =
+         {'— ', engine.gen{text}, br %}
 
    }
 
@@ -98,10 +102,17 @@ install{@, options >> [defaults & options]} =
       }
    }
 
-   @register-postprocessor{R"“”", ""}
-   @register-postprocessor{R"( +)”", "”$1"}
-   @register-postprocessor{R"“( +)", "$1“"}
-   @register-postprocessor{R" +-- +", "—"}
+   ;; @register-postprocessor{R"“”", ""}
+   ;; @register-postprocessor{R"( +)”", "”$1"}
+   ;; @register-postprocessor{R"“( +)", "$1“"}
+
+
+   @register-postprocessor{R.g"([a-z]) *([!?])", "$1\u00A0$2"}
+   @register-postprocessor{"<<", "«\u00A0"}
+   @register-postprocessor{">>", "\u00A0»"}
+   @register-postprocessor{"---", "—"}
+   @register-postprocessor{"--", "–"}
+   @register-postprocessor{R.g"\*\*\*", .asterism % "⁂"}
 
 
 
