@@ -12,15 +12,15 @@
   "license": "MIT",
   "main": "./lib/index.js",
   "dependencies": {
-    "earlgrey-runtime": ">=0.0.12",
+    "earlgrey-runtime": "^0.1.0",
     "quaint": ">=0.0.15",
     "urlencode": "^1.1.0"
   },
   "devDependencies": {
-    "earlgrey": ">=0.0.13",
-    "mocha": "^2.2.1",
     "earl-mocha": ">=0.0.3",
-    "quaint-highlight": ">=0.0.7"
+    "earlgrey": "^0.1.0",
+    "mocha": "^2.2.1",
+    "quaint-highlight": "^0.1.1"
   },
   "scripts": {
     "refresh": "earl compile -5vso lib/ src/",
